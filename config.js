@@ -6,10 +6,10 @@
 window.BBF_CONFIG = {
   // From Supabase: Project Settings > API (or "Connect" button).
   // "Project URL", e.g. https://abcdefghijkl.supabase.co
-  SUPABASE_URL: "",
+  SUPABASE_URL: "https://ofdvgfspxgyxbdbdphpq.supabase.co",
   // The "anon" / "publishable" key. It is safe to put here: the database rules only let signed-in staff read the data.
   // Never paste the "service_role" / "secret" key here.
-  SUPABASE_ANON_KEY: "",
+  SUPABASE_ANON_KEY: "sb_publishable_3cPJU09Syb7IDBwKnTBpcw_Pb6CB_ol",
 
   // Leave these as they are unless you changed them in setup.sql.
   BUCKET: "product-data",

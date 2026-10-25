@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Barcode Bin Finder</title>
+<meta name="theme-color" content="#0f6b4f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1 id="appName">Barcode Bin Finder</h1>
+      <p class="sync" id="syncLine">Starting…</p>
+    </div>
+    <button type="button" id="installBtn" class="ghost" hidden>Install app</button>
+  </header>
+
+  <!-- Sign-in -->
+  <form id="loginView" class="panel" hidden>
+    <div class="eyebrow">Staff sign-in</div>
+    <p class="muted">Sign in once on this phone. The product list is only available to approved staff.</p>
+    <label class="field-label" for="email">Email</label>
+    <input type="email" id="email" autocomplete="username" inputmode="email" required>
+    <label class="field-label" for="password">Password</label>
+    <input type="password" id="password" autocomplete="current-password" required>
+    <button type="submit" id="loginBtn" class="primary">Sign in</button>
+    <div class="status" id="loginStatus"></div>
+  </form>
+
+  <div id="setupView" class="panel" hidden>
+    <div class="eyebrow">Setup needed</div>
+    <p>This app isn't connected to Supabase yet. Open <code>config.js</code> and paste the Project URL and anon key, as described in the setup guide.</p>
+  </div>
+
+  <!-- Main app -->
+  <div id="appView" class="stack" hidden>
+    <section class="panel" aria-label="Scan">
+      <div id="scanner" class="scanner" hidden>
+        <video id="video" playsinline muted></video>
+        <div class="aim" aria-hidden="true"><span></span></div>
+        <div class="scan-ctrls">
+          <button type="button" id="torchBtn" class="chip" hidden>Light</button>
+          <button type="button" id="stopBtn" class="chip">Stop</button>
+        </div>
+      </div>
+      <button type="button" id="startBtn" class="primary">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7V4h3M21 7V4h-3M3 17v3h3M21 17v3h-3M7 8v8M10 8v8M13 8v8M16 8v8"/></svg>
+        <span>Start scanning</span>
+      </button>
+      <input type="text" id="manual" autocomplete="off" enterkeyhint="search" placeholder="Barcode, SKU or product name, then Enter">
+      <div class="status" id="status">Point the camera at a barcode. It keeps scanning until you press Stop.</div>
+      <label class="photo-link" for="photo">No live camera? Take a photo instead</label>
+      <input class="hidden-file" type="file" id="photo" accept="image/*" capture="environment">
+    </section>
+
+    <section id="results" class="results" aria-live="polite">
+      <div class="result idle">
+        <div class="eyebrow">Warehouse</div>
+        <div class="loc">—</div>
+        <div class="code">Waiting for a scan</div>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Recent scans">
+      <div class="eyebrow">Recent scans</div>
+      <ul class="history" id="history"><li><span class="c muted">No scans yet</span><span></span></li></ul>
+    </section>
+
+    <section class="panel admin" id="adminPanel" aria-label="Update product list" hidden>
+      <div class="eyebrow">Admin · Update product list</div>
+      <p class="muted">Upload the latest Excel or CSV. It replaces the list for everyone; phones pick it up the next time they open the app. Keep row 1 as headers (e.g. ItemBarcode, SKU, Warehouse, Product name). Any extra columns show on the result card.</p>
+      <label class="btn primary-outline" for="uploadFile">Choose Excel / CSV file</label>
+      <input class="hidden-file" type="file" id="uploadFile" accept=".xlsx,.xls,.csv,.txt">
+      <div class="confirm" id="confirmBox" hidden>
+        <p id="confirmText"></p>
+        <div class="row">
+          <button type="button" id="confirmUpload" class="primary small">Publish to all phones</button>
+          <button type="button" id="cancelUpload">Cancel</button>
+        </div>
+      </div>
+      <div class="status" id="adminStatus"></div>
+    </section>
+
+    <section class="panel" aria-label="Product data">
+      <div class="list-meta">
+        <span><strong id="count">0</strong> barcodes on this phone</span>
+        <span id="userLine"></span>
+      </div>
+      <div class="row">
+        <button type="button" id="refreshBtn">Check for updates</button>
+      </div>
+      <details>
+        <summary>Settings</summary>
+        <div class="settings">
+          <label for="colCode">Barcode column</label><select id="colCode"></select>
+          <label for="colLoc">Big-text column</label><select id="colLoc"></select>
+          <p class="muted">The app finds these columns by their header names. Change them only if it picked the wrong one.</p>
+          <button type="button" id="signOutBtn" class="danger">Sign out and remove data from this phone</button>
+        </div>
+      </details>
+    </section>
+  </div>
+</div>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="vendor/zxing.min.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>
